@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Language{
+  id Int @default(autoincrement()) @id
+  userId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  language String
+  level  String
+  user User @relation(fields: [userId],references: [id])
+  
+
+}
+
+model Experience {
+  id Int @default(autoincrement()) @id
+  userId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  experience String
+  year Int
+  user User @relation(fields: [userId],references: [id])
+}
+
+
+model User {
+  id Int @default(autoincrement()) @id
+  email String @unique
+  linkedIn String 
+  username String
+  location String
+  phoneNumber String
+  about String
+  eductions Eduction[] 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  languages Language[]
+  experiences Experience[]
+
+
+  // sale Boolean @default(false)
+  // great x this for enum
+}
+
+model Eduction {
+  id Int @default(autoincrement()) @id
+  university String
+  title String
+  userId  Int
+  year Int
+  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+

@@ -1,0 +1,30 @@
+version: '3.6'
+
+services:
+  resume:
+    profiles:
+      - dev
+    build:
+      context: .
+      target: base
+    ports:
+      - '4004:4004'
+    command: ['yarn', 'nest', 'start', 'resume', '--watch']
+    depends_on:
+      - resumedb
+    volumes:
+      - './:/app'
+
+  resumedb:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=passprisma
+      - POSTGRES_USER=prisnaem
+      - POSTGRES_DB=databaseprsima
+    profiles:
+      - dev
+
+networks:
+  project:

@@ -1,0 +1,123 @@
+type Eduction {
+  id: ID!
+  title: String!
+  year: Int!
+  university: String!
+  userId: Int!
+}
+
+type Experience {
+  id: Int!
+  experience: String!
+  year: Int!
+  userId: Int!
+}
+
+type Language {
+  id: ID!
+  userId: Int!
+  language: String!
+  year: Int!
+  level: String!
+}
+
+type User {
+  id: ID!
+  email: String!
+  username: String!
+  location: String!
+  linkedIn: String!
+  phoneNumber: String!
+  about: String!
+  eductions: [Eduction]
+  languages: [Language]
+  experiences: [Experience]
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput): String
+  createLanguage(data: CreateLanguageInput): String
+  createExperience(data: CreateExperienceInput): String
+  deleteLanguage(payload: PayloadDeleteLanguage): String
+  updateLanguage(payload: UpdateLanguageInput): String
+  createEduction(data: CreateEductionInput): String
+  deleteEducation(payload: PayloadDeleteEducation): String
+  deleteExperience(payload: PayloadDeleteExperience): String
+  updateEducation(payload: UpdateEducationInput): String
+  updateExperience(payload: UpdateExperienceInput): String
+}
+
+type Query {
+  users: [User]
+  languages: [Language]
+  getUser: User
+  getOneLanguages(payload: PayloadGetOneLanguage): Language
+  getOneEducation(payload: PayloadGetOneEducation): Eduction
+}
+
+input CreateUserInput {
+  email: String!
+  username: String!
+  linkedIn: String!
+  location: String!
+  phoneNumber: String!
+  about: String!
+}
+
+input CreateExperienceInput {
+  experience: String!
+  year: Int!
+}
+
+input UpdateExperienceInput {
+  id: Int!
+  experience: String
+  year: Int
+}
+
+input CreateLanguageInput {
+  level: String!
+  language: String!
+}
+
+input UpdateLanguageInput {
+  id: Int!
+  level: String
+  language: String
+}
+
+input UpdateEducationInput {
+  id: Int!
+  title: String
+  year: Int
+  university: String
+}
+
+input PayloadDeleteLanguage {
+  id: ID!
+}
+
+input PayloadDeleteEducation {
+  id: ID!
+}
+
+input PayloadDeleteExperience {
+  id: ID!
+}
+
+input PayloadGetOneLanguage {
+  id: ID!
+}
+
+input PayloadGetOneEducation {
+  id: ID!
+}
+
+input PayloadGetOneUser {
+  id: ID!
+}
+input CreateEductionInput {
+  title: String!
+  university: String!
+  year: Int!
+}
