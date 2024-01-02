@@ -1,14 +1,9 @@
-import {
-  InternalServerErrorException,
-  Logger,
-  UseGuards,
-} from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 import { UpdateLanguageInput } from 'src/graphql.schema';
 import { authGuard, IRequest } from 'src/shared/auth.guard';
-// import { CreateLanguageInput } from 'src/graphql.schema';
 import { CreateLanguageCommand } from './command/create-language/create-languages.command';
 import { DeleteLanguageCommand } from './command/delete-language/deleteLanguage.command';
 import { GetLanguageCommand } from './command/get-language/get-language.command';
@@ -41,7 +36,13 @@ export class LanguageResolver {
 
   @Query('getOneLanguages')
   async getOne(@Args('payload') { id }: GetLanguageCommand) {
-    return await this.commandBus.execute(new GetLanguageCommand({ id: id }));
+    try {
+      return await this.commandBus.execute(new GetLanguageCommand({ id: id }));
+    } catch (err) {
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
+    }
   }
 
   @Mutation('deleteLanguage')
@@ -54,7 +55,9 @@ export class LanguageResolver {
       );
       return 'delete is done';
     } catch (err) {
-      throw new InternalServerErrorException('some thi  ngs went wrong');
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
     }
   }
 
@@ -71,22 +74,30 @@ export class LanguageResolver {
       );
       return 'update is done';
     } catch (err) {
-      throw new GraphQLError('message', { extensions: { code: 'codde' } });
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
     }
   }
 
   @UseGuards(authGuard)
   @Mutation('createLanguage')
-  crea(
+  async create(
     @Args('data') args: CreateLanguageCommand,
     @Context('user') user: IRequest,
   ) {
-    return this.commandBus.execute(
-      new CreateLanguageCommand({
-        language: args.language,
-        level: args.level,
-        userId: user.id,
-      }),
-    );
+    try {
+      return await this.commandBus.execute(
+        new CreateLanguageCommand({
+          language: args.language,
+          level: args.level,
+          userId: user.id,
+        }),
+      );
+    } catch (err) {
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
+    }
   }
 }

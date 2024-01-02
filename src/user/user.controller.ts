@@ -1,13 +1,5 @@
 import { CommandBus } from '@nestjs/cqrs';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Logger,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateUserCommand } from './command/create-user/create-user.command';
 
 @Controller('user')
@@ -32,6 +24,4 @@ export class UserController {
   findAll() {
     return 'dddddddd';
   }
-
-  // @Delete(':id')
 }

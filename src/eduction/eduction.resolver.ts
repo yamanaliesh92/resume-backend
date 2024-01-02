@@ -1,12 +1,9 @@
-import {
-  InternalServerErrorException,
-  Logger,
-  UseGuards,
-} from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 import { CreateEductionDto } from 'src/dto/createEduction.dto';
-import { CreateEductionInput, UpdateEducationInput } from 'src/graphql.schema';
+import { UpdateEducationInput } from 'src/graphql.schema';
 import { authGuard, IRequest } from 'src/shared/auth.guard';
 import { CreateEducationCommand } from './command/create-education/create-education.command';
 import { DeleteEducationCommand } from './command/delete-education/deleteEducation.command';
@@ -19,22 +16,35 @@ export class EductionResolver {
 
   @UseGuards(authGuard)
   @Mutation('createEduction')
-  crea(@Args('data') args: CreateEductionDto, @Context('user') user: IRequest) {
-    Logger.log('Ags', { args });
-    Logger.log('Ags', { id: user.id });
-    return this.commandBus.execute(
-      new CreateEducationCommand({
-        title: args.title,
-        university: args.university,
-        userId: user.id,
-        year: args.year,
-      }),
-    );
+  create(
+    @Args('data') args: CreateEductionDto,
+    @Context('user') user: IRequest,
+  ) {
+    try {
+      return this.commandBus.execute(
+        new CreateEducationCommand({
+          title: args.title,
+          university: args.university,
+          userId: user.id,
+          year: args.year,
+        }),
+      );
+    } catch (err) {
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
+    }
   }
 
   @Query('getOneEducation')
   async getOne(@Args('payload') { id }: GetEducationCommand) {
-    return await this.commandBus.execute(new GetEducationCommand({ id: id }));
+    try {
+      return await this.commandBus.execute(new GetEducationCommand({ id: id }));
+    } catch (err) {
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
+    }
   }
 
   @Mutation('deleteEducation')
@@ -47,7 +57,9 @@ export class EductionResolver {
       );
       return 'delete is done';
     } catch (err) {
-      throw new InternalServerErrorException('some thinge went wrong');
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
     }
   }
 
@@ -64,7 +76,9 @@ export class EductionResolver {
       );
       return 'update is done';
     } catch (err) {
-      throw new InternalServerErrorException('some things went wrong');
+      throw new GraphQLError('some thing went wrong try again please,,', {
+        extensions: { code: '500' },
+      });
     }
   }
 }
